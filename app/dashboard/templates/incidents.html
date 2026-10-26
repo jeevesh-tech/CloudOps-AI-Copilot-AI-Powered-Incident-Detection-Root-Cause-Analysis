@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Incidents - CloudOps AI Copilot{% endblock %}
+{% block content %}
+  <h1>CloudOps AI Copilot</h1>
+  <div class="subtitle">Active Incidents</div>
+
+  <div class="counts">
+    <div class="count-box"><div class="n">{{ counts.HIGH }}</div><div class="label">High</div></div>
+    <div class="count-box"><div class="n">{{ counts.MEDIUM }}</div><div class="label">Medium</div></div>
+    <div class="count-box"><div class="n">{{ counts.LOW }}</div><div class="label">Low</div></div>
+    <div class="count-box"><div class="n">{{ counts.TOTAL }}</div><div class="label">Total</div></div>
+  </div>
+
+  <div class="panel">
+    {% if incidents %}
+    <table>
+      <thead>
+        <tr>
+          <th>Incident ID</th>
+          <th>Type</th>
+          <th>State</th>
+          <th>Severity</th>
+          <th>Service</th>
+          <th>Detected At</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for inc in incidents %}
+        <tr>
+          <td><a href="/incident/{{ inc.incident_id }}">{{ inc.incident_id }}</a></td>
+          <td>{{ inc.incident_type }}</td>
+          <td>{{ inc.state }}</td>
+          <td><span class="badge {{ inc.severity }}">{{ inc.severity }}</span></td>
+          <td>{{ inc.service }}</td>
+          <td>{{ inc.detected_at }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p>No incidents recorded.</p>
+    {% endif %}
+  </div>
+{% endblock %}

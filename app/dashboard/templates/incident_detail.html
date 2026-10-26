@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% block title %}{{ incident.incident_id }} - CloudOps AI Copilot{% endblock %}
+{% block content %}
+  <a class="back-link" href="/">&larr; Back to incidents</a>
+  <h1>{{ incident.incident_id }} &mdash; {{ incident.incident_type }}</h1>
+  <div class="subtitle">
+    <span class="badge {{ incident.severity }}">{{ incident.severity }}</span>
+    &nbsp;State: {{ incident.state }} &nbsp;|&nbsp; {{ incident.service }} ({{ incident.environment }})
+  </div>
+
+  <div class="panel">
+    <div class="kv">
+      <div>Reason</div><div>{{ incident.reason }}</div>
+      <div>Detected at</div><div>{{ incident.detected_at }}</div>
+    </div>
+  </div>
+
+  <h2>Current Metrics</h2>
+  <div class="panel">
+    <div class="kv">
+      {% for metric, value in evidence.metrics.items() %}
+      <div>{{ metric }}</div><div>{{ value }}</div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <h2>Metric History</h2>
+  <div class="panel">
+    {% if metric_charts %}
+    {% for metric, chart in metric_charts.items() %}
+    <div style="margin-bottom:18px;">
+      <div style="display:flex; justify-content:space-between; color:var(--muted); font-size:0.85rem; margin-bottom:4px;">
+        <span>{{ metric }}</span>
+        <span>latest: {{ chart.latest }} &nbsp;(min {{ chart.min }} / max {{ chart.max }})</span>
+      </div>
+      <svg width="280" height="60" style="background:#0f1420; border-radius:4px; display:block;">
+        <polyline points="{{ chart.points }}" fill="none" stroke="#4c9aff" stroke-width="2" />
+      </svg>
+    </div>
+    {% endfor %}
+    {% else %}
+    <p>No metric history available.</p>
+    {% endif %}
+  </div>
+
+  <h2>Recent Logs</h2>
+  <div class="panel">
+    {% for log in evidence.logs %}
+    <div class="log-line log-{{ log.level }}">[{{ log.level }}] {{ log.timestamp }} &mdash; {{ log.message }}</div>
+    {% else %}
+    <p>No logs available.</p>
+    {% endfor %}
+  </div>
+
+  <h2>Deployment</h2>
+  <div class="panel">
+    <div class="kv">
+      <div>Version</div><div>{{ evidence.deployment.version }}</div>
+      <div>Deployed at</div><div>{{ evidence.deployment.deployed_at }}</div>
+      <div>Likely contributor</div><div>{{ evidence.deployment.likely_contributor }}</div>
+    </div>
+  </div>
+
+  <h2>Previous Incidents (same service)</h2>
+  <div class="panel">
+    {% if evidence.previous_incidents %}
+    <ul class="plain">
+      {% for p in evidence.previous_incidents %}
+      <li><a href="/incident/{{ p.incident_id }}">{{ p.incident_id }}</a> &mdash; {{ p.incident_type }} ({{ p.detected_at }})</li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p>None</p>
+    {% endif %}
+  </div>
+
+  <h2>Relevant Runbooks</h2>
+  <div class="panel">
+    {% if evidence.runbooks %}
+    <ul class="plain">
+      {% for rb in evidence.runbooks %}
+      <li>{{ rb.title }} <span style="color:var(--muted)">({{ rb.path }})</span></li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p>No relevant runbook found.</p>
+    {% endif %}
+  </div>
+
+  <h2>AI Analysis</h2>
+  <div class="panel">
+    <div class="kv">
+      <div>Root cause</div><div>{{ analysis.root_cause }}</div>
+      <div>Confidence</div><div>{{ analysis.confidence }}</div>
+      <div>Severity</div><div>{{ analysis.severity }}</div>
+    </div>
+    <p style="color:var(--muted); margin-bottom:4px;">Recommendations</p>
+    <ul class="plain">
+      {% for r in analysis.recommendations %}<li>{{ r }}</li>{% endfor %}
+    </ul>
+    <p style="color:var(--muted); margin-bottom:4px;">Next steps</p>
+    <ul class="plain">
+      {% for s in analysis.next_steps %}<li>{{ s }}</li>{% endfor %}
+    </ul>
+  </div>
+
+  <h2>Ask about this incident</h2>
+  <div class="panel">
+    {% if chat_history %}
+    <div style="margin-bottom:12px;">
+      {% for turn in chat_history %}
+      <div style="margin-bottom:12px;">
+        <div style="color:var(--accent); font-weight:600;">You</div>
+        <div style="margin-bottom:6px;">{{ turn.question }}</div>
+        <div style="color:var(--muted); font-weight:600;">Assistant</div>
+        <div class="chat-answer">{{ turn.answer_html | safe }}</div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p style="color:var(--muted);">Ask a question about this incident, e.g. "What happened here?" or "What should I do first?"</p>
+    {% endif %}
+    <form method="post" action="/incident/{{ incident.incident_id }}/chat" class="chat-form" style="display:flex; gap:8px;">
+      <input type="text" name="question" placeholder="Ask a question about this incident..."
+             style="flex:1; padding:10px; border-radius:6px; border:1px solid var(--border); background:#0f1420; color:var(--text);" required>
+      <button type="submit" class="chat-submit"
+              style="padding:10px 18px; border-radius:6px; border:none; background:var(--accent); color:white; cursor:pointer; min-width:110px;">
+        Ask
+      </button>
+    </form>
+  </div>
+{% endblock %}

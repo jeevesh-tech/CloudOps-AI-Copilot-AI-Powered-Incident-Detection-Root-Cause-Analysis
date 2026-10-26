@@ -1,0 +1,8 @@
+# Steps 3-9, 12, 14 (simulator, monitoring, incidents, investigation, RAG, dashboard,
+# tests) use Python stdlib only - no dependencies required.
+boto3                      # Step 10 - AWS Bedrock Agent (bedrock-agent-runtime)
+snowflake-connector-python # Step 11 - Snowflake persistence (INCIDENTS/METRICS/AI_ANALYSIS/KNOWLEDGE)
+cryptography                # optional - only needed if using Snowflake key-pair auth (SNOWFLAKE_PRIVATE_KEY_PATH)
+google-genai                # optional - free-tier AI provider (GEMINI_API_KEY)
+anthropic                   # optional - AI provider (ANTHROPIC_API_KEY)
+markdown                    # web dashboard - renders AI chat answers as formatted HTML

@@ -1,0 +1,58 @@
+{
+  "rules": [
+    {
+      "alarm_name": "cloudops-ecs-cpu-high",
+      "metric": "ECSCPU",
+      "operator": ">=",
+      "threshold": 90,
+      "incident_type": "ECS_CPU_HIGH",
+      "severity": "HIGH",
+      "reason": "ECS CPU exceeded threshold"
+    },
+    {
+      "alarm_name": "cloudops-rds-connections-high",
+      "metric": "RDSConnections",
+      "operator": ">=",
+      "threshold": 90,
+      "incident_type": "RDS_CONNECTION_EXHAUSTION",
+      "severity": "MEDIUM",
+      "reason": "RDS connection count exceeded threshold"
+    },
+    {
+      "alarm_name": "cloudops-alb-5xx-spike",
+      "metric": "ALB5xx",
+      "operator": ">=",
+      "threshold": 20,
+      "incident_type": "ALB_5XX_SPIKE",
+      "severity": "HIGH",
+      "reason": "ALB 5xx error count exceeded threshold"
+    },
+    {
+      "alarm_name": "cloudops-deployment-regression",
+      "metric": "DeploymentRegression",
+      "operator": ">=",
+      "threshold": 40,
+      "incident_type": "DEPLOYMENT_REGRESSION",
+      "severity": "HIGH",
+      "reason": "Deployment regression score exceeded threshold"
+    },
+    {
+      "alarm_name": "cloudops-app-latency-high",
+      "metric": "AppLatency",
+      "operator": ">=",
+      "threshold": 500,
+      "incident_type": "APP_LATENCY_HIGH",
+      "severity": "MEDIUM",
+      "reason": "Application latency exceeded threshold"
+    },
+    {
+      "alarm_name": "cloudops-app-latency-low",
+      "metric": "AppLatency",
+      "operator": "<=",
+      "threshold": 20,
+      "incident_type": "APP_LATENCY_LOW",
+      "severity": "LOW",
+      "reason": "Application latency abnormally low (possible fast-fail/short-circuit)"
+    }
+  ]
+}
